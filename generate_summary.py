@@ -19,7 +19,7 @@ def send_telegram(message):
 
 
 def get_sheet_data():
-    url = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv&gid=0"
+    url = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=out:csv"
     resp = requests.get(url)
     resp.raise_for_status()
     return list(csv.DictReader(io.StringIO(resp.text)))
