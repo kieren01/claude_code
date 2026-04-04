@@ -1,0 +1,18 @@
+name: Daily Telegram Form Reminder
+
+on:
+  schedule:
+    - cron: '30 14 * * *'
+  workflow_dispatch:
+
+jobs:
+  send-reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Telegram message
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            --data-urlencode "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
+            --data-urlencode "text=📋 Daily Form Reminder: Please fill in your form!
+
+https://docs.google.com/forms/d/e/1FAIpQLSfyLmtWWWpcghI7AKaQwff_JuE9Ynmy7-F7thOgKNcj_qTexg/viewform?usp=dialog"
