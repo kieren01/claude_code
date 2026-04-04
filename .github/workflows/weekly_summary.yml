@@ -1,0 +1,43 @@
+name: Weekly Reflection Summary
+
+on:
+  schedule:
+    # 11 PM Singapore time (SGT = UTC+8) = 15:00 UTC every Sunday
+    - cron: '0 15 * * 0'
+  workflow_dispatch:
+
+jobs:
+  weekly-summary:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Generate and send summary
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          SHEET_ID: "119s56Xo9bs2da-qXQTpRFBspTVRji7_OGuVKIFlN9b8"
+        run: python generate_summary.py
+
+      - name: Save summary to repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase
+          git add summaries/
+          git diff --staged --quiet || git commit -m "Add weekly summary $(date +%Y-%m-%d)"
+          git push
