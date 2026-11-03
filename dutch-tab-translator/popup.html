@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dutch → English Tab Translator</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <h1>Dutch <span class="arrow">→</span> English</h1>
+    <span id="pill" class="pill idle">Idle</span>
+  </header>
+  <p id="message" class="message">Translate the audio of the current tab live.</p>
+
+  <button id="toggle" type="button">Translate this tab</button>
+
+  <section>
+    <label>Original audio <output id="origOut">15%</output>
+      <input id="originalVolume" type="range" min="0" max="100" step="1" value="15"></label>
+    <label>Translated audio <output id="transOut">100%</output>
+      <input id="translatedVolume" type="range" min="0" max="100" step="1" value="100"></label>
+    <label class="check"><input id="showCaptions" type="checkbox" checked> English captions on page</label>
+    <label class="check"><input id="showSource" type="checkbox"> Also show Dutch captions</label>
+  </section>
+
+  <details id="keyBox">
+    <summary id="keySummary">OpenAI API key</summary>
+    <div class="key-row">
+      <input id="apiKey" type="password" placeholder="sk-…" autocomplete="off" spellcheck="false">
+      <button id="saveKey" type="button" class="secondary">Save</button>
+    </div>
+    <p class="hint">Stored only in this browser profile (not synced). It is used to mint short-lived
+      session tokens and is never sent to web pages.</p>
+  </details>
+<script src="popup.js"></script>
+</body>
+</html>
