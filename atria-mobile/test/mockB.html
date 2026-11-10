@@ -1,0 +1,13 @@
+<!doctype html><html><head><meta name="viewport" content="width=device-width"><style>
+body{margin:0;font-family:sans-serif;background:#fff;color:#111}
+nav.sb{position:fixed;left:0;top:0;bottom:0;width:260px;background:#14142a;color:#fff;padding:12px}
+nav.sb a{display:block;padding:10px;color:#fff}
+main{margin-left:260px;padding:20px}
+.grid{display:grid;grid-template-columns:repeat(3,260px);gap:16px}
+.grid>div{height:300px;background:#ddd;border-radius:10px}
+.grid img{width:100%;height:200px;background:#99c}
+</style></head><body>
+<nav class="sb"><a href="#">Home</a><a href="#">Ads</a><a href="#">Brands</a><a href="#">Boards</a></nav>
+<main><h2>Library</h2><div class="grid" id="g"></div></main>
+<script>const g=document.getElementById('g');for(let i=0;i<9;i++){g.insertAdjacentHTML('beforeend','<div><img><p>Card '+i+'</p></div>')}</script>
+</body></html>

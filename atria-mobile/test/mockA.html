@@ -1,0 +1,21 @@
+<!doctype html><html><head><meta name="viewport" content="width=1280"><style>
+body{margin:0;font-family:sans-serif;background:#0f0f14;color:#eee}
+#app{display:flex;min-height:100vh}
+.side{width:240px;flex:none;background:#1b1b25;min-height:100vh;padding:16px}
+.side a{display:block;padding:10px;color:#ccc}
+.main{flex:1;min-width:900px;padding:24px}
+.masonry{position:relative;height:3000px}
+.card{position:absolute;width:280px;height:340px;background:#2a2a38;border-radius:12px;overflow:hidden}
+.card img{width:100%;height:240px;background:#557}
+.card video{width:100%;height:240px;background:#575}
+.modal{position:fixed;top:0;right:0;width:600px;height:100vh;background:#333;display:none}
+</style></head><body><div id="app">
+<aside class="side"><div>LOGO</div><a href="#a">Discover</a><a href="#b">Boards</a><a href="#c">Brands</a><a href="#d">Swipe file</a><a href="#e">Settings</a></aside>
+<div class="main"><h2>Discover</h2><div class="masonry" id="m"></div></div></div>
+<div class="modal" style="display:block">detail panel</div>
+<script>
+const m=document.getElementById('m');
+for(let i=0;i<12;i++){const c=document.createElement('div');c.className='card';
+c.style.left=(i%3)*300+'px';c.style.top=Math.floor(i/3)*360+'px';
+c.innerHTML=(i%2?'<img alt="">':'<video muted loop autoplay></video>')+'<div style="padding:8px">Ad '+i+' headline</div>';m.appendChild(c);}
+</script></body></html>
