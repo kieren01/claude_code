@@ -1,0 +1,11 @@
+{
+  "name": "adswipe",
+  "version": "1.0.0",
+  "description": "A fast, local replacement front end for the Facebook Ad Library with a real video scrubber and a swipe file.",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": { "node": ">=18" }
+}

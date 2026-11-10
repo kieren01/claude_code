@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ad Swipe</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">Ad Swipe</div>
+  <nav class="tabs" role="tablist">
+    <button class="tab is-on" role="tab" data-view="discover" id="tabDiscover">Discover</button>
+    <button class="tab" role="tab" data-view="swipe" id="tabSwipe">Swipe file <span class="count" id="swipeCount">0</span></button>
+  </nav>
+  <form class="search" id="searchForm" autocomplete="off">
+    <input id="q" type="search" placeholder="Search ads, e.g. protein powder" aria-label="Search ads">
+    <input id="country" class="country" type="text" value="US" maxlength="40" title="Country code(s), comma separated. EU countries return all ad types." aria-label="Country">
+    <select id="status" aria-label="Ad status"><option value="ACTIVE">Active</option><option value="ALL">All</option><option value="INACTIVE">Inactive</option></select>
+    <button class="btn primary" type="submit">Search</button>
+  </form>
+  <div class="top-actions">
+    <button class="btn" id="addBtn">+ Add ad</button>
+    <button class="btn icon" id="settingsBtn" title="Settings" aria-label="Settings">⚙</button>
+  </div>
+</header>
+
+<main>
+  <section id="discover" class="view">
+    <div class="bar">
+      <label class="check"><input type="checkbox" id="videoOnly"> Video ads only</label>
+      <span class="muted" id="discoverStatus"></span>
+    </div>
+    <div class="grid" id="discoverGrid"></div>
+    <div class="empty" id="discoverEmpty"></div>
+    <div class="more"><button class="btn" id="loadMore" hidden>Load more</button></div>
+  </section>
+
+  <section id="swipe" class="view" hidden>
+    <div class="bar">
+      <input id="swipeFilter" type="search" placeholder="Filter your swipe file" aria-label="Filter swipe file">
+      <select id="tagFilter" aria-label="Filter by tag"><option value="">All tags</option></select>
+      <span class="spacer"></span>
+      <a class="btn" href="/api/export" download>Export JSON</a>
+    </div>
+    <div class="chips" id="folderChips"></div>
+    <div class="grid" id="swipeGrid"></div>
+    <div class="empty" id="swipeEmpty"></div>
+    <div class="more"><button class="btn" id="swipeMore" hidden>Show more</button></div>
+  </section>
+</main>
+
+<!-- Viewer -->
+<dialog id="viewer" class="viewer">
+  <div class="viewer-body">
+    <div class="stage">
+      <div class="player" id="player">
+        <video id="vid" playsinline preload="metadata"></video>
+        <div class="spinner" id="spinner" hidden></div>
+        <div class="player-msg" id="playerMsg" hidden></div>
+      </div>
+      <div class="controls">
+        <div class="scrub" id="scrub" role="slider" aria-label="Seek" tabindex="0">
+          <div class="rail"><div class="buffered" id="buffered"></div><div class="played" id="played"></div></div>
+          <div class="ticks" id="ticks"></div>
+          <div class="tip" id="tip">0:00</div>
+        </div>
+        <div class="ctl-row">
+          <button class="cbtn" id="bBack" title="Back 10 seconds (J)">⟲ 10</button>
+          <button class="cbtn play" id="bPlay" title="Play / pause (Space)" aria-label="Play">▶</button>
+          <button class="cbtn" id="bFwd" title="Forward 10 seconds (L)">10 ⟳</button>
+          <button class="cbtn" id="bFrameBack" title="Previous frame (,)">◂❘</button>
+          <button class="cbtn" id="bFrameFwd" title="Next frame (.)">❘▸</button>
+          <span class="time" id="time">0:00 / 0:00</span>
+          <span class="spacer"></span>
+          <button class="cbtn" id="bMark" title="Mark this moment (N)">+ Mark</button>
+          <select class="cbtn" id="speed" title="Speed ([ and ])" aria-label="Speed">
+            <option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="0.75">0.75×</option>
+            <option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option>
+          </select>
+          <button class="cbtn" id="bLoop" title="Loop (R)" aria-pressed="false">↻</button>
+          <button class="cbtn" id="bMute" title="Mute (M)" aria-label="Mute">🔊</button>
+          <input type="range" id="vol" min="0" max="1" step="0.05" value="1" aria-label="Volume">
+          <button class="cbtn" id="bFull" title="Fullscreen (F)" aria-label="Fullscreen">⛶</button>
+        </div>
+        <p class="keys">Space play · J/L ±10s · ←/→ ±5s · , . frame · [ ] speed · N mark · S save · 0–9 jump</p>
+      </div>
+    </div>
+    <aside class="panel" id="panel"></aside>
+  </div>
+  <button class="x" id="closeViewer" aria-label="Close">✕</button>
+</dialog>
+
+<!-- Add -->
+<dialog id="addDlg" class="dlg">
+  <form method="dialog" id="addForm">
+    <h2>Add an ad</h2>
+    <p class="muted">Paste an Ad Library link (the one ending in <code>?id=…</code>), an ad ID, or a direct video URL.</p>
+    <input id="addInput" type="text" placeholder="https://www.facebook.com/ads/library/?id=…" aria-label="Ad link">
+    <p class="err" id="addErr" hidden></p>
+    <div class="or">or</div>
+    <label class="drop-btn"><input type="file" id="fileInput" accept="video/*,.mp4,.mov,.m4v,.webm" multiple hidden> Choose video files from your computer</label>
+    <p class="muted small">You can also drop video files anywhere on this page.</p>
+    <div class="dlg-actions"><button class="btn" value="cancel" type="button" id="addCancel">Cancel</button><button class="btn primary" type="submit" id="addGo">Open</button></div>
+  </form>
+</dialog>
+
+<!-- Settings -->
+<dialog id="settingsDlg" class="dlg">
+  <form id="settingsForm">
+    <h2>Settings</h2>
+    <label for="tokenInput">Meta access token</label>
+    <input id="tokenInput" type="password" placeholder="Paste token to search" autocomplete="off">
+    <p class="muted small" id="tokenState"></p>
+    <details class="help"><summary>How do I get a token?</summary>
+      <ol>
+        <li>Confirm your identity once at <a href="https://www.facebook.com/ads/library/api/" target="_blank" rel="noopener">facebook.com/ads/library/api</a>.</li>
+        <li>Create a Meta developer app, open the Graph API Explorer and generate a user token.</li>
+        <li>Paste it above. Meta's API returns political and social-issue ads everywhere, and all ads shown in EU countries. For other ads, paste the ad's link with “+ Add ad”.</li>
+      </ol>
+    </details>
+    <label for="countryInput">Default country</label>
+    <input id="countryInput" type="text" maxlength="40" placeholder="US, or DE,FR for several">
+    <div class="dlg-actions"><button class="btn" type="button" id="settingsCancel">Cancel</button><button class="btn primary" type="submit">Save</button></div>
+  </form>
+</dialog>
+
+<div class="dropzone" id="dropzone" hidden>Drop videos to add them to your swipe file</div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script src="/app.js"></script>
+</body>
+</html>
